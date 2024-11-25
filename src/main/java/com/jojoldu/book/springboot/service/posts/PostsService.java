@@ -2,15 +2,12 @@ package com.jojoldu.book.springboot.service.posts;
 
 import com.jojoldu.book.springboot.domain.posts.Posts;
 import com.jojoldu.book.springboot.domain.posts.PostsRepository;
-import com.jojoldu.book.springboot.web.dto.PostsListResponseDto;
-import com.jojoldu.book.springboot.web.dto.PostsResponseDto;
-import com.jojoldu.book.springboot.web.dto.PostsSaveRequestDto;
-import com.jojoldu.book.springboot.web.dto.PostsUpdateRequestDto;
+import com.jojoldu.book.springboot.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -34,6 +31,14 @@ public class PostsService {
         return id;
     }
 
+    @Transactional
+    public void delete(Long id) {
+        Posts posts = postsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id = " + id));
+
+        postsRepository.delete(posts);
+    }
+
     public PostsResponseDto findById(Long id) {
         Posts entity = postsRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id = " + id));
@@ -43,7 +48,7 @@ public class PostsService {
 
     @Transactional(readOnly = true)
     public List<PostsListResponseDto> findAddDesc() {
-        return postsRepository.findAllDesc().stream().map(PostListResponseDto::new).collect(Collectors.toList());
+        return postsRepository.findAllDesc().stream().map(PostsListResponseDto::new).collect(Collectors.toList());
     }
 
 }
